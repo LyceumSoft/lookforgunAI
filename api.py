@@ -21,11 +21,15 @@ def load_and_preprocess_images(img_dir):
         path.append(img_path)
     images = np.array(images)
     return images, path
-print("1 - shortgun | 2 - longgun | 3 - nogun")
+print("1 - nogun | 2 - shortgun | 3 - longun")
 filepath = "F:\lookforgunsonpicAI\gunset\gunsnew/test"
 temp, path = load_and_preprocess_images(filepath)    
 predictions = model.predict(temp)
 print(predictions)
 predicted_classes = np.argmax(predictions, axis=1)
 for i in range(len(predictions)):
-    print(f"{path[i]} | {predictions[i]} | класс: {predicted_classes[i]+1}")
+    if predicted_classes[i] + 1 == 1: anw = "nogun"
+    elif predicted_classes[i] + 1 == 2: anw = "shortgun"
+    elif predicted_classes[i] + 1 == 3: anw = "longgun"
+    else: anw = "???"
+    print(f"{path[i]} | {predictions[i]} | класс: {predicted_classes[i]+1} | {anw}")

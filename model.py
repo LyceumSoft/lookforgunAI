@@ -13,7 +13,7 @@ from sklearn.preprocessing import LabelBinarizer
 matplotlib.style.use('ggplot')
 
 img_size = 300
-batch_size = 32
+batch_size = 16
 EPOCHS = 25
 img = "F:\lookforgunsonpicAI\gunset\gunsnew\images"
 labels = "F:\lookforgunsonpicAI\gunset\gunsnew\labels"
@@ -66,16 +66,14 @@ def load_and_preprocess_labels(labels_dir):
             root = ET.fromstring(xml_data)
             label = root.find('object').find('name').text
             labels.append(label)
-            print(labels)
     return np.array(labels)
 
 print("готовим данные...")
 X = load_and_preprocess_images(img)
 y = load_and_preprocess_labels(labels)
-y = [0 if label == 'nogun' else 1 if label == 'shortgun' else 2 for label in y]
+y = [0 if label == 'nogun' else 1 if label == 'short_weapons' else 2 for label in y]
 print("успешная загрузка")
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
-print(X_train, X_valid, y_train, y_valid)
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.4, random_state=42)
 print("Генерация...")
 
 train_data_generator = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(len(X_train)).batch(batch_size)
