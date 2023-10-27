@@ -1,15 +1,27 @@
-from flask import request, render_template
-from flask import Flask
-from flask import render_template
+import tensorflow as tf
+from tensorflow import keras
+import keras
+import numpy as np
 import os
+import glob
+from keras.preprocessing import image
+from flask import Flask, request, render_template
 
-#осталось нейронку подсоеденить с нейронкой
-target_dir = 'C:/Users/Admin/Desktop/FLASK/flask_pac3/picture_save' # поменяй путь к папке куда сохраняем картинки
+app = Flask(__name)
+img_size = 300
+model = keras.models.load_model('lookforguns.keras')
 
-
-
-target_dir = target_dir + '/'
-app = Flask(__name__)
+def load_and_preprocess_images(img_dir):
+    images = []
+    path = []
+    for img_path in glob.glob(os.path.join(img_dir, '*.jpg')):
+        img = image.load_img(img_path, target_size=(img_size, img_size))
+        img = image.img_to_array(img)
+        img = img / 255.0 
+        images.append(img)
+        path.append(img_path)
+    images = np.array(images)
+    return images, path
 
 @app.route('/')
 def home():
@@ -21,16 +33,31 @@ def upload():
     file = request.files['file']
     file.save(target_dir + file.filename)
 
-    #Output - console
+    # Output - console
     dir_dlin = len('file_download:' + target_dir + file.filename)
     print('_' * dir_dlin)
     print('file_download:' + target_dir + file.filename)
-    print('‾' *dir_dlin)
-    #Output - console
+    print('‾' * dir_dlin)
+    # Output - console
 
-    return render_template('upload.html')
+    temp, path = load_and_preprocess_images(target_dir)
+    predictions = model.predict(temp)
+    predicted_classes = np.argmax(predictions, axis=1)
+    result = []
 
+    for i in range(len(predictions)):
+        if predicted_classes[i] + 1 == 1:
+            anw = "nogun"
+        elif predicted_classes[i] + 1 == 2:
+            anw = "shortgun"
+        elif predicted_classes[i] + 1 == 3:
+            anw = "longgun"
+        else:
+            anw = "???"
+        result.append((path[i], predictions[i], predicted_classes[i] + 1, anw))
+
+    return render_template('upload.html', result=result)
 
 if __name__ == '__main__':
+    target_dir = '..git/lookforgunAI/flask_pac3/images'  # путь к папке куда сохраняются картинки
     app.run()
-
