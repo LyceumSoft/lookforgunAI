@@ -9,6 +9,7 @@ from keras.layers import *
 from keras.preprocessing import image
 from bs4 import BeautifulSoup
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelBinarizer
 matplotlib.style.use('ggplot')
 img_size = 300
 batch_size = 32
@@ -60,30 +61,43 @@ def load_and_preprocess_labels(labels_dir):
     for label_path in glob.glob(os.path.join(labels_dir, '*.xml')):
         with open(label_path, 'r') as label_file:
             xml_data = label_file.read()
+            root = ET.fromstring(xml_data)
+            label = root.find('object').find('name').text
+            labels.append(label)
     return np.array(labels)
+
 print("готовим данные...")
 X = load_and_preprocess_images(img)
 y = load_and_preprocess_labels(labels)
+y = [1 if label == 'gun' else 0 for label in y]
 print("успешная загрузка")
 X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
+print(X_train, X_valid, y_train, y_valid)
 print("Генерация...")
 train_data_generator = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(len(X_train)).batch(batch_size)
 valid_data_generator = tf.data.Dataset.from_tensor_slices((X_valid, y_valid)).batch(batch_size)
 print("Успех")
+
 model = tf.keras.Sequential([
     tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_size, img_size, 3)),
     tf.keras.layers.MaxPooling2D((2, 2)),
     tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
     tf.keras.layers.MaxPooling2D((2, 2)),
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(4, activation='softmax')
+    tf.keras.layers.Dense(3, activation='softmax')
 ])
+
 model.compile(
   optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
   loss="categorical_crossentropy",
   metrics=['accuracy']
 )
+
 model.summary()
-model.fit(train_data_generator, epochs=EPOCHS, validation_data=valid_data_generator)
+history = model.fit(train_data_generator, epochs=EPOCHS, validation_data=valid_data_generator)
 model.save('lookforguns.keras')
+train_acc = history.history['accuracy']
+valid_acc = history.history['val_accuracy']
+train_loss = history.history['loss']
+valid_loss = history.history['val_loss']
 save_plots(train_acc, valid_acc, train_loss, valid_loss)
