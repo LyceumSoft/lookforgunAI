@@ -188,7 +188,7 @@ def upload():
             warngun = 1
         else:
             anw = "???"
-        resultgun = anw
+        resultgun = anw 
     for j in range(len(predictionshuman)):
         if warngun == 0:
             anw = "notarmed"
@@ -206,11 +206,11 @@ def upload():
         resulthuman = anw
     process_and_save_predictions(test_path, gunsmodel, device, output_path, threshold=0.5)
     image_path =  "predicted_" + file.filename
-    print(image_path)
-    result = [resultgun, resulthuman, int(warngun + warnhuman)]
-    os.remove(f"{target_dir}/{file.filename}")
+    if warnhuman > 0 or warngun > 0:
+        result = "!ВНИМАНИЕ! Возможна угроза безопасности"
+    else: 
+        result = "Угроза не обнаружена"
     #process_and_save_predictions(test_path, model, device, output_path, threshold=0.7) - не нужна 
-    print(result)
     return render_template('./upload.html', result=result, image_path=image_path)
 
 if __name__ == '__main__':

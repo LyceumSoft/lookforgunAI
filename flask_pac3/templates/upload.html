@@ -31,7 +31,7 @@
         }
 
         .container {
-            max-width: 450px;
+            max-width: 800px;
             margin: 0 auto;
             margin-top: 18%;
             padding: 20px;
@@ -59,21 +59,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Файл успешно загружен!</h1>
+        <h1>Файл успешно обработан!</h1>
         <img src="{{ url_for('static', filename=image_path) }}" alt="Uploaded Image">
-        <table>
-            <tr>
-                <th>Человек</th>
-                <th>Имя класса</th>
-                <th>Уровень угррзы</th>
-            </tr>
-            <tr>
-                <td>{{ result[0] }}</td>
-                <td>{{ result[1] }}</td>
-                <td>{{ result[2] }}</td>
-            </tr>
-        </table>
-        <p><a href="../templates/home.html">Вернуться на главную страницу</a></p>
+        <h2>
+            {% if result == "!ВНИМАНИЕ! Возможна угроза безопасности" %}
+            <p style="color: red;">{{ result }}</p>
+            {% else %}
+            <p>{{ result }}</p>
+            {% endif %}
+        </h2>
+        <p><a href="/">Вернуться на главную страницу</a></p>
     </div>
     <div class="bottom_line">
         <e1>Разработано LyceumSoft</e1>
