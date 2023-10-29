@@ -143,7 +143,6 @@ def load_and_preprocess_images(img_dir, filename):
     path = []
     for img_path in glob.glob(os.path.join(img_dir, '*.jpg')):
         if filename in img_path:
-            print(filename)
             img = image.load_img(img_path, target_size=(img_size, img_size))
             img = image.img_to_array(img)
             img = img / 255.0 
@@ -211,6 +210,7 @@ def upload():
     else: 
         result = "Угроза не обнаружена,\n" + "но не теряйте бдительность\n" + "проверяйте изображения на счёт красных рамок\n"
     #process_and_save_predictions(test_path, model, device, output_path, threshold=0.7) - не нужна 
+    pathh = f"{target_dir}/{file.filename}"
     return render_template('./upload.html', result=result, image_path=image_path)
 
 if __name__ == '__main__':
