@@ -209,7 +209,7 @@ def upload():
     if warnhuman > 0 or warngun > 0:
         result = "!ВНИМАНИЕ! Возможна угроза безопасности"
     else: 
-        result = "Угроза не обнаружена, но не теряйте бдительность и проверяйте изображения на счёт красных рамок"
+        result = "Угроза не обнаружена,\n" + "но не теряйте бдительность\n" + "проверяйте изображения на счёт красных рамок\n"
     #process_and_save_predictions(test_path, model, device, output_path, threshold=0.7) - не нужна 
     return render_template('./upload.html', result=result, image_path=image_path)
 
