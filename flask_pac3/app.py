@@ -24,6 +24,8 @@ from torchvision.models.detection import fasterrcnn_resnet50_fpn
 from torchvision.models.detection.rpn import AnchorGenerator
 from torchvision import transforms as torchtrans  
 import matplotlib.patches as patches
+
+
 labels_path = 'F:\lookforgunsonpicAI\gunset\\test\Labels'
 imgs_path = 'F:\lookforgunsonpicAI\gunset\\test\Images'
 output_path = 'F:\lookforgunsonpicAI\site\\ready'
@@ -34,7 +36,7 @@ LOAD_MODEL_FILENAME = "weapon_trained_model-"+LOAD_MODEL_VERSION+".pt"
 LOAD_DIR = 'F:\lookforgunsonpicAI\yolo_python\savedmodel\\'
 
 cpu_device = torch.device("cpu")
-model= torch.load(LOAD_DIR+LOAD_MODEL_FILENAME, map_location=torch.device('cpu'))
+gunsmodel = torch.load(LOAD_DIR+LOAD_MODEL_FILENAME, map_location=torch.device('cpu'))
 model.eval()
 
 test_data = gun(imgs_path, labels_path)
@@ -47,7 +49,7 @@ app = Flask(__name__)
 img_size = 300
 modelgun = keras.models.load_model('F:\lookforgunsonpicAI\git\lookforgunAI\\flask_pac3\lookforguns.keras')
 modelhuman = keras.models.load_model('F:\lookforgunsonpicAI\git\lookforgunAI\\flask_pac3\lookforhumans.keras')
-
+gunsmodel = torch.load(LOAD_DIR+LOAD_MODEL_FILENAME, map_location=torch.device('cpu'))
 def apply_nms(orig_prediction, iou_thresh=None):
     keep = torchvision.ops.nms(orig_prediction['boxes'], orig_prediction['scores'], iou_thresh)
     
@@ -59,6 +61,7 @@ def apply_nms(orig_prediction, iou_thresh=None):
     return final_prediction
 def torch_to_pil(img):
     return torchtrans.ToPILImage()(img).convert('RGB')
+
 
 def plot_and_save_img_bbox(img, target, output_path):
     fig, a = plt.subplots(1, 1)
@@ -139,9 +142,13 @@ def upload():
         resulthuman = anw
     ### сюда
 
+    if warnhuman == 1 or warngun == 1:
+         process_and_save_predictions(test_path, model, device, output_path, threshold=0.7)
+    
+
     result = [resultgun, resulthuman, int(warngun + warnhuman)]
     os.remove(f"{target_dir}/{file.filename}")
-    process_and_save_predictions(test_path, model, device, output_path, threshold=0.7)
+    #process_and_save_predictions(test_path, model, device, output_path, threshold=0.7) - не нужна 
     return render_template('upload.html', result=result)
 
 if __name__ == '__main__':
