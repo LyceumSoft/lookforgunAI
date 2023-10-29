@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1">
     <style>
         body {
-            background-image: url("/flask_pac3/custom/47.jpg");
+            background-image: url("{{ url_for('static', filename='back1.jpg') }}");
             background-repeat: no-repeat;
             background-size: 100% 100%;
             font-family: Arial, sans-serif;
@@ -112,7 +112,7 @@
     </div>
     <div class="bottom_line">
         <e1>Разработано LyceumSoft</e1>
-        <img src="C://Users/user/Downloads/3c5a77d3-7dd0-419f-bda4-62a241d22b2f.png" align="right" width="64.8px" height="40.7px" hspace="25px">
+        <img src="{{ url_for('static', filename='logo.png') }}" align="right" width="64.8px" height="40.7px" hspace="25px">
     </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <title>Загрузка файла</title>
     <style>
         body {
-            background-image: url("/flask_pac3/custom/45.jpg");
+            background-image: url("{{ url_for('static', filename='back2.jpg') }}");
             background-repeat: no-repeat;
             background-size: 100% 100%;
 
@@ -36,7 +36,7 @@
             margin-top: 18%;
             padding: 20px;
             background-color: #fff;
-            border-radius: 700px;
+            border-radius: 1200px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
@@ -60,25 +60,24 @@
 <body>
     <div class="container">
         <h1>Файл успешно загружен!</h1>
+        <img src="{{ url_for('static', filename=image_path) }}" alt="Uploaded Image">
         <table>
             <tr>
                 <th>Человек</th>
                 <th>Имя класса</th>
                 <th>Уровень угррзы</th>
             </tr>
-            {% for item in result %}
             <tr>
-                <td>{{ item }}</td>
-                <td>{{ item }}</td>
-                <td>{{ item }}</td>
+                <td>{{ result[0] }}</td>
+                <td>{{ result[1] }}</td>
+                <td>{{ result[2] }}</td>
             </tr>
-            {% endfor %}
         </table>
-        <p><a href="/home.html">Вернуться на главную страницу</a></p>
+        <p><a href="../templates/home.html">Вернуться на главную страницу</a></p>
     </div>
     <div class="bottom_line">
         <e1>Разработано LyceumSoft</e1>
-        <img src="C://Users/user/Downloads/3c5a77d3-7dd0-419f-bda4-62a241d22b2f.png" align="right" width="64.8px" height="40.7px" hspace="25px">
+        <img src="{{ url_for('static', filename='logo.png') }}" align="right" width="64.8px" height="40.7px" hspace="25px">
     </div>
 </body>
 </html>
